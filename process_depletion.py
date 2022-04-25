@@ -97,7 +97,7 @@ if __name__ == "__main__":
     basemodel_path = "C2VSimFG_V1_05a"
     scenario_dir = "1980_V1_05a"
     output_path = "PostProc_{}".format(scenario_dir)
-    scenario_paths = [d for d in os.listdir(scenario_dir) if "VS" in d]
+    scenario_paths = [os.path.join(scenario_dir, d) for d in os.listdir(scenario_dir) if "VS" in d]
 
     pp_dir = "Preprocessor"
     sim_dir = "Simulation"

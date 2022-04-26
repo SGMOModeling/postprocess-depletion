@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import os
+import matplotlib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,6 +10,7 @@ import matplotlib.pyplot as plt
 from pywfm import IWFMModel
 from pywfm import IWFMBudget
 
+matplotlib.use('Agg')
 
 def get_stream_budget(model_path, result_dir, stream_budget_file):
     """
@@ -111,6 +113,7 @@ if __name__ == "__main__":
     gw_bud_file = "C2VSimFG_GW_Budget.hdf"
 
     for scenario_path in scenario_paths:
+        print('Plotting {}'.format(os.path.basename(scenario_path)))
 
         if not os.path.exists(output_path):
             os.mkdir(output_path)
@@ -290,7 +293,7 @@ if __name__ == "__main__":
             os.path.join(scenario_path, sim_dir, "Groundwater/C2VSimFG_WellSpec.dat"),
             header=None,
             names=wc_col.split(),
-            skiprows=755,
+            skiprows=94 + n_well + 49,
             nrows=n_well,
             comment="/",
             delim_whitespace=True,
@@ -310,7 +313,7 @@ if __name__ == "__main__":
         )
 
         test_pumping = pump_rates[["Date"] + well_ts_cols].copy()
-        test_pumping["total"] = test_pumping.sum(axis=1)
+        test_pumping["total"] = test_pumping[well_ts_cols].sum(axis=1)
 
         total_volume = test_pumping["total"].sum()
 
@@ -318,6 +321,14 @@ if __name__ == "__main__":
         for col in well_ts_cols:
             ax.plot(pump_rates["Date"], pump_rates[col])
         ax.plot(test_pumping["Date"], test_pumping["total"])
+        plt.savefig(
+            os.path.join(
+                output_path,
+                os.path.basename(scenario_path),
+                '{}_pumping.png'.format(os.path.basename(scenario_path))
+            )
+        )
+        plt.close()
 
         # Get Stream Network Information and Groundwater Levels for Model Layer 1
 
@@ -419,6 +430,7 @@ if __name__ == "__main__":
                 "{}_StreamDepletion.png".format(os.path.basename(scenario_path)),
             )
         )
+        plt.close()
 
         cumulative_depletion_by_streamnode = pd.merge(
             base_swgw[base_swgw["Date"] == base_swgw["Date"].min()][
@@ -473,7 +485,8 @@ if __name__ == "__main__":
                 ),
             )
         )
-
+        plt.close()
+        
         threshold = 0.0001
         for dt in sim_dates:
 
@@ -599,6 +612,7 @@ if __name__ == "__main__":
                 "{}_Pumping_SFD_Response.png".format(os.path.basename(scenario_path)),
             )
         )
+        plt.close()
 
         ranked_depletion = (
             depletion_sr.groupby("ReachID")["Depletion"]
@@ -652,3 +666,4 @@ if __name__ == "__main__":
                 ),
             )
         )
+        plt.close()

@@ -219,10 +219,6 @@ if __name__ == "__main__":
         )
 
         # Plot Cumulative Depletion during the Simulation
-        # * sum of depletion at all stream nodes
-        # * groundwater budget for entire model
-        # * check if equal (and opposite)
-
         fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(11, 12))
         ax[0].plot(
             total_depletion_sr.index,
@@ -241,8 +237,16 @@ if __name__ == "__main__":
         plt.suptitle("Global Check of Depletion between Stream Reaches and Groundwater")
         ax[0].set_title("Visual Check of Symmetry")
         ax[1].set_title("Visual Check of Equality")
+        plt.savefig(
+            os.path.join(
+                output_path,
+                os.path.basename(scenario_path),
+                '{}_check.png'.format(os.path.basename(scenario_path))
+            )
+        )
+        plt.close()
 
-        # Read Well Location and Time Series Information
+        # Read Well Locations and Time Series Information
         #
         # Read location information only for wells in transfer project
         # Calculate total pumping for transfer project during 6 month period
@@ -317,6 +321,7 @@ if __name__ == "__main__":
 
         total_volume = test_pumping["total"].sum()
 
+        # Plot pumping by well and total pumping
         fig, ax = plt.subplots(figsize=(11, 6))
         for col in well_ts_cols:
             ax.plot(pump_rates["Date"], pump_rates[col])
@@ -331,7 +336,6 @@ if __name__ == "__main__":
         plt.close()
 
         # Get Stream Network Information and Groundwater Levels for Model Layer 1
-
         base_swgw = get_interconnected_surface_water(
             basemodel_path, pp_dir, pp_file, sim_dir, sim_file
         )
@@ -341,6 +345,7 @@ if __name__ == "__main__":
 
         sim_dates = base_swgw["Date"].dt.strftime("%Y-%m-%d").unique()
 
+        # Plot maps of interconnected surface water
         for dt in sim_dates:
             fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16, 11))
             ax[0].scatter(
@@ -399,13 +404,7 @@ if __name__ == "__main__":
             )
             plt.close()
 
-        # Plot Depletion
-        #
-        # 1. cumulative depletion by stream node for each time step </br>
-        # 2. correlate disconnection with depletion response </br>
-        # 3. plot depletion and cumulative depletion by stream reach
-        #
-        #
+        # Plot incremental and cumulative stream depletion by stream reach
         fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(11, 12))
         for rch in depletion_sr["ReachID"].unique():
             ax[0].plot(
@@ -441,6 +440,7 @@ if __name__ == "__main__":
             right_on="IRV",
         )
 
+        # Plot cumulative stream depletion map
         cutoff = 0.01
         fig, ax = plt.subplots(figsize=(8, 11))
         ax.scatter(
@@ -487,6 +487,7 @@ if __name__ == "__main__":
         )
         plt.close()
         
+        # Plot Depletion Maps for each time step
         threshold = 0.0001
         for dt in sim_dates:
 
@@ -580,6 +581,7 @@ if __name__ == "__main__":
             )
             plt.close()
 
+        # Plot comparison between pumping hydrograph and depletion hydrograph
         fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(11, 12))
         ax[0].plot(
             total_depletion_sr.index,
@@ -645,6 +647,7 @@ if __name__ == "__main__":
             percent_depletion_by_sr["Depletion"] / 43560 / total_volume * 100
         )
 
+        # Plot Cumulative Stream Depletion Curve for each stream reach
         fig, ax = plt.subplots(figsize=(11, 6))
         ax.stackplot(
             percent_depletion_by_sr.pivot(

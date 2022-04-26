@@ -12,7 +12,7 @@ from pywfm import IWFMBudget
 
 matplotlib.use('Agg')
 
-def get_stream_budget(model_path, result_dir, stream_budget_file):
+def get_stream_budget(model_path, results_dir, stream_budget_file):
     """
     Retrieve surface water groundwater interaction for all stream nodes
     """
@@ -28,7 +28,7 @@ def get_stream_budget(model_path, result_dir, stream_budget_file):
     return pd.concat(dfs_list)
 
 
-def get_streamnode_budget(model_path, result_dir, streamnode_budget_file):
+def get_streamnode_budget(model_path, results_dir, streamnode_budget_file):
     """
     Retrieve surface water groundwater interaction for all stream nodes
     """

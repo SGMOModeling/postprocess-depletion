@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 from pywfm import IWFMModel
 from pywfm import IWFMBudget
 
+# Matplotlib 3.5.1 - https://github.com/matplotlib/matplotlib/issues/21950
+# Resolves: Fail to create pixmap with Tk_GetPixmap in TkImgPhotoInstanceSetSize
 matplotlib.use('Agg')
 
 def get_stream_budget(model_path, results_dir, stream_budget_file):
